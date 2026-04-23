@@ -8,3 +8,12 @@
 *.pyc
 .env
 dist
+*.csv
+*.txt
+INSTALLER
+METADATA
+RECORD
+WHEEL
+.venv-jobspy/**
+.vscode/**
+archive*/**

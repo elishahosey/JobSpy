@@ -167,15 +167,20 @@ class Country(Enum):
     @classmethod
     def from_string(cls, country_str: str):
         """Convert a string to the corresponding Country enum."""
-        country_str = country_str.strip().lower()
-        for country in cls:
-            country_names = country.value[0].split(",")
-            if country_str in country_names:
-                return country
-        valid_countries = [country.value for country in cls]
-        raise ValueError(
-            f"Invalid country string: '{country_str}'. Valid countries are: {', '.join([country[0] for country in valid_countries])}"
-        )
+        try: 
+            country_str = country_str.strip().lower()
+            
+            for country in cls:
+                country_names = country.value[0].split(",")
+                if country_str in country_names:
+                    return country
+            valid_countries = [country.value for country in cls]
+            # raise ValueError(
+            #     f"Invalid country string: '{country_str}'. Valid countries are: {', '.join([country[0] for country in valid_countries])}"
+            # )
+        except ValueError as e:
+            print(f"Error when parsing country string: {e}")
+            return None
 
 
 class Location(BaseModel):
@@ -282,6 +287,7 @@ class JobPost(BaseModel):
 
 class JobResponse(BaseModel):
     jobs: list[JobPost] = []
+
 
 
 class Site(Enum):
