@@ -2,6 +2,8 @@
 /.idea
 **/__pycache__/
 **/.pytest_cache/
+.job_cache/
+logs/
 /.ipynb_checkpoints/
 **/output/
 **/.DS_Store

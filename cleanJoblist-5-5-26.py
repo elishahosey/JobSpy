@@ -28,88 +28,41 @@ print(f"Total jobs before cleaning: {processed_count}")
 FALLBACK = True  # Whether to include the fallback bridge roles in the initial scrape and analysis
 
 bridge_roles = [
-    # SQL / database-development bridge roles. These can be target-lane when the
-    # description includes ETL, SSIS, data quality, reporting systems, or tuning.
-    "sql developer",
-    "database developer",
     "database engineer",
-    "sql database developer",
-    "t-sql developer",
-    "etl developer",
-    "data warehouse developer",
-    "ssis developer",
-
-    # Integration / migration bridge roles. Strong only when data movement, APIs,
-    # XML/JSON/SFTP, validation, or reconciliation are central.
     "data integration",
-    "data integration developer",
-    "integration developer",
-    "integration engineer",
     "data migration engineer",
-    "data conversion developer",
-
-    # Survival / adjacent roles. Keep strict because these can drift into analyst,
-    # reporting-only, or app-support work.
-    "automation engineer data",
+    "database engineer",#closest to your SQL + data validation strength
+    "automation engineer data",  # keeps Python + scripting signal alive
     "systems analyst sql data",
     "systems analyst data integration",
     "systems analyst etl",
     "application engineer data",
     "application data analyst sql",
-    "data analyst sql",
-    "reporting analyst sql",
-    "support engineer data",
+    "data analyst sql", #fallback, high volume, SQL-heavy
+    "reporting analyst sql", #survival model for analytics-adjacent roles that still use SQL and may have some data engineering adjacent work
 
-    # Technical bridge roles that preserve SQL/data/debugging signal.
-    # Avoid ERP/implementation/configuration-only ecosystems.
-    "systems analyst",
-    "application analyst",
-    "application support analyst",
-    "business systems analyst",
-    "systems support analyst",
-    "technical support analyst sql",
-    "integration support analyst",
-    "product support engineer",
-    "technical solutions engineer",
-    "application support engineer",
-    "integration support engineer",
-
-    # Data operations / data quality bridge roles.
-    "data operations analyst",
-    "data quality analyst",
-    "data integrity analyst",
-    "data governance analyst",
-    "sql analyst",
-    "database analyst",
-    "operations analyst sql",
-    "operations systems analyst",
-    "reporting systems analyst"
 ]
 
 primary_keywords = [
-    # Direct target lane
     "data integration engineer",
     "data warehouse engineer",
+    "big data engineer",
     "data engineer",
+    "data platform engineer",
     "etl engineer",
     "etl developer",
+    "analytics engineer",
     "data pipeline engineer",
     "integration engineer",
     "data developer",
+    "sql developer",
     "data systems engineer",
     "data quality engineer",
     "data integration developer",
     "data operations engineer",
     "data ingestion engineer",
     "software engineer data engineering",
-
-    # SQL / database-dev titles are acceptable target-lane when description is
-    # SQL Server + ETL/data quality/tuning/reporting-system heavy.
-    "sql developer",
     "database developer",
-    "sql database developer",
-    "t-sql developer",
-    "data warehouse developer",
 ]
 
 secondary_keywords = [
@@ -118,215 +71,71 @@ secondary_keywords = [
     "backend engineer",
     "software engineer data",
     "software developer data",
+    "data platform engineer",
     "data infrastructure engineer",
     "data systems engineer",
     "business intelligence engineer",
-    "bi data engineer",
-    "analytics engineer",
     "data integration developer",
     "integration developer",
     "application developer data",
     "reporting developer",
-    "systems analyst",
-    "application analyst",
-    "business systems analyst",
-    "data operations analyst",
-    "data quality analyst",
-    "application support engineer",
-    "integration support engineer",
-    "technical solutions engineer",
 ]
 
 # Much stricter DE-centered signals.
 core_description_keywords = [
-    # SQL / database development
     "sql",
-    "sql server",
-    "microsoft sql server",
-    "t-sql",
-    "stored procedures",
-    "stored procedure",
-    "procedures",
-    "ssis",
-    "ssrs",
-    "sql agent",
-    "sql agent jobs",
-    "query tuning",
-    "query optimization",
-    "indexing",
-    "indexes",
-    "database scripts",
-    "data load scripts",
-    "complex sql",
-    "relational database",
-    "relational databases",
-
-    # ETL / pipeline work
     "etl",
     "elt",
     "pipeline",
     "pipelines",
-    "data pipeline",
-    "data pipelines",
     "data ingestion",
-    "ingestion",
     "data transformation",
-    "transformation",
-    "load data",
-    "batch jobs",
-    "batch processing",
-    "source to target",
-    "data warehouse",
-    "enterprise data warehouse",
-    "data warehousing",
-    "data modeling",
-    "schema design",
-    "dimensional modeling",
-
-    # Data quality / reliability
-    "data validation",
-    "validation checks",
-    "data quality",
-    "data quality checks",
-    "reconciliation",
-    "data reconciliation",
-    "data integrity",
-    "data accuracy",
-    "data discrepancies",
-    "data correctness",
-    "data quality rules",
-
-    # Integration / transfer
     "data integration",
     "integration",
-    "integrations",
     "api integration",
-    "api integrations",
     "rest api",
-    "rest apis",
     "restful api",
-    "restful apis",
     "api",
-    "apis",
-    "soap",
-    "payload",
+    "data warehouse",
+    "data modeling",
+    "data validation",
+    "data quality",
+    "reconciliation",
+    "batch processing",
+    "data processing",
+    "source to target",
+    "stored procedures",
     "record processing",
+    "payload",
     "file transfer",
-    "data transfer",
     "sftp",
     "xml",
     "json",
-
-    # Production debugging / operational data support
-    "production support",
-    "root cause analysis",
-    "root-cause analysis",
-    "troubleshooting",
-    "debugging",
-    "logs",
-    "log analysis",
-    "incident resolution",
-    "pipeline failures",
-    "production issues",
-    "production incidents",
-    "incident management",
-    "ticket resolution",
-    "issue triage",
-    "support tickets",
-    "application support",
-    "system support",
-    "systems support",
-    "workflow troubleshooting",
-    "data issues",
-    "record validation",
-    "business rules",
-    "system integrations",
-    "enterprise applications",
 ]
 
 modern_tool_keywords = [
-    # Modern data platform / distributed processing
     "spark",
-    "apache spark",
-    "pyspark",
-    "databricks",
-    "azure databricks",
-    "delta lake",
-    "lakehouse",
-    "hadoop",
-    "hdfs",
-    "emr",
-    "flink",
-    "beam",
-
-    # Cloud-native data platform stack
-    "aws",
-    "aws services",
-    "aws technologies",
-    "s3",
-    "lambda",
-    "glue",
-    "redshift",
-    "athena",
-    "kinesis",
-    "firehose",
-    "gcp",
-    "google cloud",
-    "bigquery",
-    "cloud dataflow",
-    "cloud composer",
-    "azure data factory",
-    "data factory",
-    "synapse",
-    "fabric",
-    "microsoft fabric",
-
-    # Orchestration / modern analytics engineering
     "airflow",
     "dbt",
-    "dagster",
-    "dataform",
-    "snowflake",
-    "snowpipe",
-    "palantir",
-    "palantir foundry",
-    "sap btp",
-
-    # Streaming / event-driven systems
     "kafka",
-    "apache kafka",
-    "event streaming",
-    "stream processing",
-    "event-driven",
-    "event driven",
-    "real-time",
-    "near real-time",
-
-    # Platform / infra signals
     "microservices",
     "distributed systems",
-    "kubernetes",
-    "k8s",
-    "aks",
-    "eks",
-    "docker",
-    "containerization",
-    "terraform",
-    "iac",
-    "infrastructure provisioning",
-    "platform engineering",
-    "platform operations",
-    "sre",
-    "devops",
-
-    # AI/ML platform signals
+    "event streaming",
+    "stream processing",
+    "databricks",
+    "snowflake",
+    "redshift",
+    "bigquery",
+    "glue",
+    "emr",
+    "kinesis",
+    "lakehouse",
     "mlops",
+    "kubernetes",
+    "aks",
+    "terraform",
+    "synapse",
     "mlflow",
-    "feature store",
-    "bedrock",
-    "rag",
-    "llm",
-    "ai agents",
 ]
 
 exclude_keywords = [
@@ -376,19 +185,14 @@ exclude_keywords = [
     "aircraft",
     "uas",
     "avionics",
-    "erp",
-    "implementation",
-    "implementation consultant",
-    "functional consultant",
-    "configuration specialist",
-    "salesforce administrator",
-    "servicenow administrator",
 ]
 
 SHORT_WORD_EXCLUDES = {"sr", "vp"}
 
 wrong_lane_title_keywords = [
+    "data analyst",
     "business analyst",
+    "reporting analyst",
     "data scientist",
     "applied scientist",
     "ml engineer",
@@ -416,8 +220,6 @@ wrong_lane_title_keywords = [
 ]
 
 wrong_lane_desc_keywords = [
-    # BI/dashboard-only risk. These are not bad alone, but become wrong-lane if
-    # they dominate without ETL/data modeling/data quality support.
     "power bi",
     "tableau",
     "looker",
@@ -425,30 +227,7 @@ wrong_lane_desc_keywords = [
     "dashboards",
     "executive reporting",
     "self-service analytics",
-    "data storytelling",
-    "excel reporting only",
-    "kpi dashboards",
-    "marketing analytics",
-    "google analytics",
-    "seo analytics",
-    "campaign analytics",
-    "ad hoc reporting only",
-
-    # ERP / implementation / configuration-only risk
-    "erp implementation",
-    "software implementation",
-    "implementation consultant",
-    "client onboarding",
-    "customer onboarding",
-    "configuration specialist",
-    "workflow configuration",
-    "crm administrator",
-    "salesforce administrator",
-    "servicenow administrator",
-
-    # AI / ML / advanced analytics risk
     "predictive analytics",
-    "predictive modeling",
     "machine learning",
     "deep learning",
     "data scientist",
@@ -457,26 +236,10 @@ wrong_lane_desc_keywords = [
     "openai api",
     "anthropic api",
     "ai agents",
-    "rag",
-    "llm",
-
-    # QA/testing lane
     "selenium",
     "robot framework",
     "functional testing",
     "regression testing",
-    "sdet",
-
-    # Consulting / vendor delivery risk
-    "digital transformation",
-    "client-facing",
-    "client facing",
-    "workshops",
-    "sow",
-    "professional services",
-    "consulting",
-
-    # Non-target domains
     "adobe experience platform",
     "aem",
     "scada",
@@ -588,45 +351,18 @@ def strong_core_count(row):
 
     strong_signals = [
         "sql",
-        "sql server",
-        "t-sql",
-        "stored procedures",
-        "ssis",
-        "ssrs",
-        "sql agent",
-        "query tuning",
-        "query optimization",
-        "indexing",
         "etl",
-        "elt",
         "pipeline",
-        "data pipeline",
-        "data pipelines",
         "data validation",
-        "validation checks",
         "reconciliation",
         "data transformation",
         "sftp",
         "payload",
-        "xml",
-        "json",
-        "api",
-        "rest api",
         "data ingestion",
         "data quality",
-        "data integrity",
         "data integration",
         "data warehouse",
-        "production support",
-        "root cause analysis",
-        "troubleshooting",
-        "application support",
-        "system support",
-        "production incidents",
-        "incident management",
-        "ticket resolution",
-        "record validation",
-        "business rules",
+        "stored procedures",
     ]
     return sum(1 for kw in strong_signals if kw in description)
 
@@ -639,37 +375,20 @@ def data_centric_score(row):
         "elt",
         "pipeline",
         "pipelines",
-        "data pipeline",
-        "data pipelines",
         "data ingestion",
         "data transformation",
         "data validation",
-        "validation checks",
         "data quality",
-        "data quality checks",
         "reconciliation",
-        "data reconciliation",
         "data warehouse",
-        "enterprise data warehouse",
         "data integration",
         "data modeling",
-        "schema design",
         "payload",
         "record processing",
         "batch jobs",
         "batch processing",
         "source to target",
         "stored procedures",
-        "ssis",
-        "sql agent",
-        "data integrity",
-        "production support",
-        "root cause analysis",
-        "record validation",
-        "data issues",
-        "business rules",
-        "system integrations",
-        "application support",
     ]
     return sum(1 for term in data_centric_terms if term in description)
 
@@ -694,22 +413,12 @@ def title_has_backend_or_integration_signal(row):
         "api engineer",
         "api developer",
         "reporting developer",
-        "systems analyst",
-        "application analyst",
-        "business systems analyst",
-        "data operations analyst",
-        "data quality analyst",
-        "sql analyst",
-        "database analyst",
-        "application support analyst",
-        "integration support analyst",
-        "technical solutions engineer",
-        "product support engineer",
     ]
     return any(signal in title for signal in signals)
 
 
 BAD_OTHER_TITLE_TERMS = [
+    "analyst",
     "scientist",
     "ai",
     "genai",
@@ -747,21 +456,7 @@ def title_has_backend_or_integration_signal(row):
         "integration engineer",
         "integration developer",
         "data developer",
-        "database developer",
-        "database engineer",
-        "sql developer",
         "reporting developer",
-        "systems analyst",
-        "application analyst",
-        "business systems analyst",
-        "data operations analyst",
-        "data quality analyst",
-        "sql analyst",
-        "database analyst",
-        "application support analyst",
-        "integration support analyst",
-        "technical solutions engineer",
-        "product support engineer",
     ]
     return any(signal in title for signal in signals)
 
@@ -888,9 +583,6 @@ def is_modern_tool_dominant(row):
     if modern_count >= 4 and data_score <= 1:
         return True
 
-    if row.get("infra_platform_score", 0) >= 3 and strong_count < 4:
-        return True
-
     return False
 
 
@@ -927,109 +619,6 @@ def title_type(row):
     return "other"
 
 
-
-def sql_database_dev_score(row):
-    """Positive cluster for SQL Developer / Database Developer target-lane roles."""
-    description = normalize_text(row.get("description", ""))
-    terms = [
-        "sql server", "microsoft sql server", "t-sql", "stored procedures",
-        "ssis", "ssrs", "sql agent", "query tuning", "query optimization",
-        "indexing", "database scripts", "data load scripts", "complex sql",
-        "relational database", "data integrity", "data reconciliation",
-    ]
-    return sum(1 for term in terms if term in description)
-
-
-def infra_platform_score(row):
-    """Hard-negative infra/platform signals when central."""
-    description = normalize_text(row.get("description", ""))
-    terms = [
-        "kubernetes", "k8s", "docker", "containerization", "terraform", "iac",
-        "infrastructure provisioning", "devops", "sre", "site reliability",
-        "platform operations", "platform engineering", "cluster management",
-        "workspace administration", "unity catalog", "rbac", "abac",
-        "cost management", "cloud infrastructure", "cloud architecture",
-    ]
-    return sum(1 for term in terms if term in description)
-
-
-def consulting_score(row):
-    description = normalize_text(row.get("description", ""))
-    terms = [
-        "consulting", "client-facing", "client facing", "client delivery",
-        "professional services", "digital transformation", "workshops", "sow",
-        "stakeholder workshops", "client requirements", "external client",
-        "vendor", "staffing", "implementation consultant", "implementation",
-        "client onboarding", "customer onboarding", "erp implementation",
-        "workflow configuration", "configuration specialist",
-    ]
-    return sum(1 for term in terms if term in description)
-
-
-def bi_dashboard_score(row):
-    description = normalize_text(row.get("description", ""))
-    terms = [
-        "power bi", "tableau", "looker", "dashboard", "dashboards",
-        "executive reporting", "self-service analytics", "visualization",
-        "visualizations", "dax", "semantic model", "semantic models",
-    ]
-    return sum(1 for term in terms if term in description)
-
-
-def is_modern_platform_role(row):
-    """
-    Hard-filter style detector: if two or more modern platform clusters are present
-    and core SQL/ETL evidence is not clearly dominant, treat as platform risk.
-    """
-    description = normalize_text(row.get("description", ""))
-    clusters = 0
-
-    cloud = any(term in description for term in [
-        "aws", "gcp", "google cloud", "azure", "cloud platform", "cloud-native",
-        "cloud native", "cloud architecture", "cloud infrastructure",
-    ])
-    distributed = any(term in description for term in [
-        "spark", "pyspark", "databricks", "hadoop", "flink", "emr", "beam",
-        "large-scale data", "big data", "petabyte", "terabyte",
-    ])
-    streaming = any(term in description for term in [
-        "kafka", "kinesis", "firehose", "event-driven", "event driven",
-        "stream processing", "real-time", "near real-time", "streaming",
-    ])
-    platform_owner = any(term in description for term in [
-        "platform engineering", "platform operations", "data platform", "workspace administration",
-        "cluster management", "unity catalog", "rbac", "abac", "cost management",
-        "platform governance", "scalable data platform", "data architecture ownership",
-    ])
-
-    clusters += int(cloud)
-    clusters += int(distributed)
-    clusters += int(streaming)
-    clusters += int(platform_owner)
-
-    return clusters >= 2 and row["strong_core_count"] < 4
-
-
-def sql_dev_recovery_match(row):
-    """Allow SQL Developer / Database Developer roles through when they are truly SQL/ETL-heavy."""
-    title = normalize_text(row.get("title", ""))
-    role_type = row["title_type"]
-    sql_title = any(term in title for term in [
-        "sql developer", "database developer", "t-sql developer", "ssis developer",
-        "data warehouse developer", "database engineer",
-    ])
-
-    return (
-        (sql_title or role_type in {"primary", "bridge"})
-        and row["sql_database_dev_score"] >= 3
-        and row["data_centric_score"] >= 3
-        and row["strong_core_count"] >= 3
-        and row["modern_signal_count"] <= 3
-        and row["infra_platform_score"] <= 1
-        and not row["modern_platform_role"]
-        and (row["years_required"] is None or row["years_required"] < 5)
-    )
-
 def assign_fit_bucket(row):
     if row["is_excluded"]:
         return "skip"
@@ -1040,19 +629,10 @@ def assign_fit_bucket(row):
     if row["other_title_hard_reject"]:
         return "skip"
 
-    if row["wrong_lane_desc_score"] >= 2 and row["data_centric_score"] < 3 and not row.get("sql_dev_recovery_match", False):
+    if row["wrong_lane_desc_score"] >= 2 and row["data_centric_score"] < 3:
         return "skip"
 
-    if row["modern_platform_role"] and not row.get("sql_dev_recovery_match", False):
-        return "skip"
-
-    if row["modern_tool_dominant"] and not row["soft_recovery_match"] and not row.get("sql_dev_recovery_match", False):
-        return "skip"
-
-    if row["infra_platform_score"] >= 3 and row["strong_core_count"] < 4:
-        return "skip"
-
-    if row["consulting_score"] >= 3 and row["data_centric_score"] < 4:
+    if row["modern_tool_dominant"] and not row["soft_recovery_match"]:
         return "skip"
 
     if row["years_required"] is not None and row["years_required"] >= 5:
@@ -1069,18 +649,9 @@ def assign_fit_bucket(row):
     data_score = row["data_centric_score"]
     direct_url = row["has_direct_url"]
 
-    # SQL Developer / Database Developer path. These can be apply-worthy when
-    # SQL Server/T-SQL/SSIS/tuning + ETL/data quality are central.
-    if row.get("sql_dev_recovery_match", False):
-        if row["sql_database_dev_score"] >= 4 and row["data_centric_score"] >= 4 and row["bi_dashboard_score"] <= 2:
-            return "apply" if direct_url else "review"
-        return "review"
-
-    # Bridge roles: strict, but allow technical analyst/support roles when SQL/data/debugging evidence is real.
+    # Bridge roles: very strict
     if role_type == "bridge":
         if core_count >= 6 and strong_count >= 3 and data_score >= 3 and modern_count <= 2:
-            return "review"
-        if core_count >= 4 and strong_count >= 2 and data_score >= 2 and modern_count <= 2:
             return "review"
         return "skip"
 
@@ -1143,12 +714,7 @@ jobs_df["core_signal_count"] = jobs_df.apply(core_signal_count, axis=1)
 jobs_df["modern_signal_count"] = jobs_df.apply(modern_signal_count, axis=1)
 jobs_df["strong_core_count"] = jobs_df.apply(strong_core_count, axis=1)
 jobs_df["data_centric_score"] = jobs_df.apply(data_centric_score, axis=1)
-jobs_df["sql_database_dev_score"] = jobs_df.apply(sql_database_dev_score, axis=1)
-jobs_df["infra_platform_score"] = jobs_df.apply(infra_platform_score, axis=1)
-jobs_df["consulting_score"] = jobs_df.apply(consulting_score, axis=1)
-jobs_df["bi_dashboard_score"] = jobs_df.apply(bi_dashboard_score, axis=1)
 jobs_df["modern_tool_dominant"] = jobs_df.apply(is_modern_tool_dominant, axis=1)
-jobs_df["modern_platform_role"] = jobs_df.apply(is_modern_platform_role, axis=1)
 jobs_df["is_excluded"] = jobs_df.apply(is_excluded_title, axis=1)
 jobs_df["wrong_lane_title"] = jobs_df.apply(is_wrong_lane_title, axis=1)
 jobs_df["wrong_lane_desc_score"] = jobs_df.apply(wrong_lane_desc_score, axis=1)
@@ -1156,7 +722,6 @@ jobs_df["has_direct_url"] = jobs_df.apply(has_direct_url, axis=1)
 jobs_df["title_backend_or_integration_signal"] = jobs_df.apply(title_has_backend_or_integration_signal, axis=1)
 jobs_df["other_title_hard_reject"] = jobs_df.apply(other_title_hard_reject, axis=1)
 jobs_df["soft_recovery_match"] = jobs_df.apply(soft_recovery_match, axis=1)
-jobs_df["sql_dev_recovery_match"] = jobs_df.apply(sql_dev_recovery_match, axis=1)
 jobs_df["fit_bucket"] = jobs_df.apply(assign_fit_bucket, axis=1)
 
 print("\nFit bucket counts before dedupe:")
@@ -1186,11 +751,10 @@ cleaned_jobs_df = cleaned_jobs_df.sort_values(
         "core_signal_count",
         "strong_core_count",
         "data_centric_score",
-        "sql_database_dev_score",
         "company",
         "title",
     ],
-    ascending=[True, False, False, False, False, True, True],
+    ascending=[True, False, False, False, True, True],
 ).drop(columns=["bucket_sort"])
 
 cleaned_jobs_df = cleaned_jobs_df.drop(columns=["dedupe_key"])

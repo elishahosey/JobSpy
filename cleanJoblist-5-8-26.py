@@ -58,32 +58,7 @@ bridge_roles = [
     "application data analyst sql",
     "data analyst sql",
     "reporting analyst sql",
-    "support engineer data",
-
-    # Technical bridge roles that preserve SQL/data/debugging signal.
-    # Avoid ERP/implementation/configuration-only ecosystems.
-    "systems analyst",
-    "application analyst",
-    "application support analyst",
-    "business systems analyst",
-    "systems support analyst",
-    "technical support analyst sql",
-    "integration support analyst",
-    "product support engineer",
-    "technical solutions engineer",
-    "application support engineer",
-    "integration support engineer",
-
-    # Data operations / data quality bridge roles.
-    "data operations analyst",
-    "data quality analyst",
-    "data integrity analyst",
-    "data governance analyst",
-    "sql analyst",
-    "database analyst",
-    "operations analyst sql",
-    "operations systems analyst",
-    "reporting systems analyst"
+    "support engineer data"
 ]
 
 primary_keywords = [
@@ -127,14 +102,6 @@ secondary_keywords = [
     "integration developer",
     "application developer data",
     "reporting developer",
-    "systems analyst",
-    "application analyst",
-    "business systems analyst",
-    "data operations analyst",
-    "data quality analyst",
-    "application support engineer",
-    "integration support engineer",
-    "technical solutions engineer",
 ]
 
 # Much stricter DE-centered signals.
@@ -228,20 +195,6 @@ core_description_keywords = [
     "incident resolution",
     "pipeline failures",
     "production issues",
-    "production incidents",
-    "incident management",
-    "ticket resolution",
-    "issue triage",
-    "support tickets",
-    "application support",
-    "system support",
-    "systems support",
-    "workflow troubleshooting",
-    "data issues",
-    "record validation",
-    "business rules",
-    "system integrations",
-    "enterprise applications",
 ]
 
 modern_tool_keywords = [
@@ -376,19 +329,14 @@ exclude_keywords = [
     "aircraft",
     "uas",
     "avionics",
-    "erp",
-    "implementation",
-    "implementation consultant",
-    "functional consultant",
-    "configuration specialist",
-    "salesforce administrator",
-    "servicenow administrator",
 ]
 
 SHORT_WORD_EXCLUDES = {"sr", "vp"}
 
 wrong_lane_title_keywords = [
+    "data analyst",
     "business analyst",
+    "reporting analyst",
     "data scientist",
     "applied scientist",
     "ml engineer",
@@ -426,25 +374,6 @@ wrong_lane_desc_keywords = [
     "executive reporting",
     "self-service analytics",
     "data storytelling",
-    "excel reporting only",
-    "kpi dashboards",
-    "marketing analytics",
-    "google analytics",
-    "seo analytics",
-    "campaign analytics",
-    "ad hoc reporting only",
-
-    # ERP / implementation / configuration-only risk
-    "erp implementation",
-    "software implementation",
-    "implementation consultant",
-    "client onboarding",
-    "customer onboarding",
-    "configuration specialist",
-    "workflow configuration",
-    "crm administrator",
-    "salesforce administrator",
-    "servicenow administrator",
 
     # AI / ML / advanced analytics risk
     "predictive analytics",
@@ -620,13 +549,6 @@ def strong_core_count(row):
         "production support",
         "root cause analysis",
         "troubleshooting",
-        "application support",
-        "system support",
-        "production incidents",
-        "incident management",
-        "ticket resolution",
-        "record validation",
-        "business rules",
     ]
     return sum(1 for kw in strong_signals if kw in description)
 
@@ -665,11 +587,6 @@ def data_centric_score(row):
         "data integrity",
         "production support",
         "root cause analysis",
-        "record validation",
-        "data issues",
-        "business rules",
-        "system integrations",
-        "application support",
     ]
     return sum(1 for term in data_centric_terms if term in description)
 
@@ -694,22 +611,12 @@ def title_has_backend_or_integration_signal(row):
         "api engineer",
         "api developer",
         "reporting developer",
-        "systems analyst",
-        "application analyst",
-        "business systems analyst",
-        "data operations analyst",
-        "data quality analyst",
-        "sql analyst",
-        "database analyst",
-        "application support analyst",
-        "integration support analyst",
-        "technical solutions engineer",
-        "product support engineer",
     ]
     return any(signal in title for signal in signals)
 
 
 BAD_OTHER_TITLE_TERMS = [
+    "analyst",
     "scientist",
     "ai",
     "genai",
@@ -751,17 +658,6 @@ def title_has_backend_or_integration_signal(row):
         "database engineer",
         "sql developer",
         "reporting developer",
-        "systems analyst",
-        "application analyst",
-        "business systems analyst",
-        "data operations analyst",
-        "data quality analyst",
-        "sql analyst",
-        "database analyst",
-        "application support analyst",
-        "integration support analyst",
-        "technical solutions engineer",
-        "product support engineer",
     ]
     return any(signal in title for signal in signals)
 
@@ -959,9 +855,7 @@ def consulting_score(row):
         "consulting", "client-facing", "client facing", "client delivery",
         "professional services", "digital transformation", "workshops", "sow",
         "stakeholder workshops", "client requirements", "external client",
-        "vendor", "staffing", "implementation consultant", "implementation",
-        "client onboarding", "customer onboarding", "erp implementation",
-        "workflow configuration", "configuration specialist",
+        "vendor", "staffing", "implementation consultant",
     ]
     return sum(1 for term in terms if term in description)
 
@@ -1076,11 +970,9 @@ def assign_fit_bucket(row):
             return "apply" if direct_url else "review"
         return "review"
 
-    # Bridge roles: strict, but allow technical analyst/support roles when SQL/data/debugging evidence is real.
+    # Bridge roles: very strict
     if role_type == "bridge":
         if core_count >= 6 and strong_count >= 3 and data_score >= 3 and modern_count <= 2:
-            return "review"
-        if core_count >= 4 and strong_count >= 2 and data_score >= 2 and modern_count <= 2:
             return "review"
         return "skip"
 

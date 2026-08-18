@@ -41,6 +41,43 @@ print(jobs.head())
 jobs.to_csv("jobs.csv", quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False) # to_excel
 ```
 
+### Local scrape progress logging
+
+The repo's `joblist.py` runner writes one JSON-lines progress log per run to `logs/scrape-progress-<run-id>.jsonl`. Each line is a structured event with fields like `timestamp`, `run_id`, `event`, `term`, `lane`, `sites`, `job_count`, `duration_seconds`, and error details when a site or term fails.
+
+Useful events include `run_started`, `task_batch_started`, `term_started`, `cache_hit`, `combined_scrape_failed`, `site_scrape_completed`, `term_completed`, `dedupe_completed`, and `run_completed`. These files are ignored by git and can later be shipped to S3, CloudWatch, or another AWS destination.
+
+Logging can be configured with environment variables:
+
+```powershell
+$env:SCRAPE_LOG_DIR="logs"
+$env:SCRAPE_RUN_ID="manual-test"
+$env:SCRAPE_LOG_ENABLED="1"
+python joblist.py
+```
+
+Set `SCRAPE_LOG_ENABLED=0` to disable progress logging.
+
+### SkillFreq intake test file
+
+Generate one synthetic, single-job `jobs-M-D-YY.csv` in the repository root without running a live scrape:
+
+```powershell
+python generate_skillfreq_test_csv.py
+```
+
+To place it directly in the SkillFreq intake directory:
+
+```powershell
+python generate_skillfreq_test_csv.py --output-dir import
+```
+
+Run the generator's unit test with:
+
+```powershell
+python -m unittest test_generate_skillfreq_test_csv.py
+```
+
 ### Output
 
 ```
