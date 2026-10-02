@@ -16,7 +16,9 @@ same results, load the JSON and call `scrape_batch()` once, then use pandas'
 `to_csv()` and `to_excel()` methods. Use distinct filenames to retain past runs.
 CLI runs also write provider logs to `output/logs/scrape-MM-DD-YYYY.log` while
 continuing to show logs in the console. Repeated runs on the same day append to
-that date's log.
+that date's log. The terminal also prints flushed `[n/total] START` and `DONE`
+lines for each query, with its mode and returned row count, even when provider
+verbosity is unset.
 
 ## Migration source and active settings
 

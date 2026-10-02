@@ -226,6 +226,17 @@ class BatchTests(unittest.TestCase):
             logger.warning("batch log test")
             close_file_logging()
             self.assertIn("batch log test", log_path.read_text(encoding="utf-8"))
+
+    @patch("jobspy.batch.scrape_jobs", return_value=pd.DataFrame())
+    def test_batch_prints_flushed_progress_for_each_query(self, scrape):
+        with patch("builtins.print") as print_mock:
+            scrape_batch(SEARCHES[:2])
+        messages = [call.args[0] for call in print_mock.call_args_list]
+        self.assertIn("[1/2] START job_title:   \"Data Engineer\" -intern  ", messages)
+        self.assertIn("[1/2] DONE job_title:   \"Data Engineer\" -intern   (0 rows)", messages)
+        self.assertIn("[2/2] START skill_based: SQL ETL Python", messages)
+        self.assertIn("[2/2] DONE skill_based: SQL ETL Python (0 rows)", messages)
+        self.assertTrue(all(call.kwargs.get("flush") for call in print_mock.call_args_list))
         self.assertEqual(
             dated_output_path(Path("output/jobs.xlsx"), date(2026, 10, 1)),
             Path("output/jobs-10-01-2026.xlsx"),

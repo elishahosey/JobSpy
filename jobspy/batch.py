@@ -99,10 +99,16 @@ def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
             raise ValueError("Per-search results_wanted must be a positive integer")
 
     frames = []
-    for search in searches:
+    total_searches = len(searches)
+    for index, search in enumerate(searches, start=1):
         options = dict(scrape_options)
         if "results_wanted" in search:
             options["results_wanted"] = search["results_wanted"]
+        print(
+            f"[{index}/{total_searches}] START "
+            f"{search['mode']}: {search['query']}",
+            flush=True,
+        )
         jobs = scrape_jobs(
             search_term=search["query"],
             google_search_term=search.get("google_search_term"),
@@ -114,6 +120,11 @@ def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
         jobs["search_query"] = search["query"]
         jobs["search_mode"] = search["mode"]
         frames.append(jobs)
+        print(
+            f"[{index}/{total_searches}] DONE "
+            f"{search['mode']}: {search['query']} ({len(jobs)} rows)",
+            flush=True,
+        )
 
     return pd.concat(frames, ignore_index=True)
 

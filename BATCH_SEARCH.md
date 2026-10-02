@@ -26,6 +26,9 @@ The output argument is optional; omitting it defaults to `output/jobs.csv`.
 Each CLI run also writes provider logs to
 `output/logs/scrape-MM-DD-YYYY.log` and keeps console logging enabled. The log
 uses the date only and appends repeated runs from the same day.
+The terminal also prints flushed `[n/total] START` and `DONE` lines for every
+query, including its mode and returned row count. These progress lines appear
+even when `verbose` is unset or provider logging is quiet.
 
 If needed, create the environment first with `python -m venv .venv-jobspy`.
 The real config preserves 127 active historical queries, Texas, a 24-hour age
