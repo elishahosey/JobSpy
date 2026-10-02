@@ -1,0 +1,18 @@
+{
+  "searches": [
+    {"query": "Data Engineer", "mode": "job_title"},
+    {"query": "Database Developer", "mode": "job_title"},
+    {"query": "SQL ETL Python", "mode": "skill_based"},
+    {"query": "Python SQL API", "mode": "skill_based"},
+    {"query": "Backend Engineer SQL API", "mode": "mixed"}
+  ],
+  "scrape_options": {
+    "site_name": ["indeed", "linkedin"],
+    "location": "Houston, TX",
+    "country_indeed": "USA",
+    "results_wanted": 2,
+    "hours_old": 168,
+    "is_remote": false,
+    "verbose": 2
+  }
+}
