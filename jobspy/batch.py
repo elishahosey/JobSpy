@@ -89,7 +89,13 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "config", type=Path, help="JSON with searches and scrape_options"
     )
-    parser.add_argument("output", type=Path, help="Output .csv or .xlsx file")
+    parser.add_argument(
+        "output",
+        type=Path,
+        nargs="?",
+        default=Path("output/jobs.csv"),
+        help="Output .csv or .xlsx file (default: output/jobs.csv)",
+    )
     args = parser.parse_args(argv)
     suffix = args.output.suffix.lower()
     if suffix not in (".csv", ".xlsx"):

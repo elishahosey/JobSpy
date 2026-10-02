@@ -1,6 +1,7 @@
 import copy
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from datetime import date
@@ -181,6 +182,25 @@ class BatchTests(unittest.TestCase):
             dated_output_path(Path("output/jobs.csv"), date(2026, 10, 1)),
             Path("output/jobs-10-01-2026.csv"),
         )
+
+    @patch("jobspy.batch.scrape_jobs", return_value=pd.DataFrame())
+    def test_output_defaults_to_dated_csv_in_output_directory(self, scrape):
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "searches.json"
+            config.write_text(json.dumps({"searches": SEARCHES}), encoding="utf-8")
+            previous_directory = Path.cwd()
+            os.chdir(directory)
+            try:
+                main([str(config)])
+            finally:
+                os.chdir(previous_directory)
+            output = (
+                Path(directory)
+                / "output"
+                / f"jobs-{date.today():%m-%d-%Y}.csv"
+            )
+            self.assertTrue(output.exists())
+            self.assertEqual(scrape.call_count, len(SEARCHES))
         self.assertEqual(
             dated_output_path(Path("output/jobs.xlsx"), date(2026, 10, 1)),
             Path("output/jobs-10-01-2026.xlsx"),
