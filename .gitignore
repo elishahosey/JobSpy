@@ -8,3 +8,24 @@
 *.pyc
 .env
 dist
+# Local Python environments and editor settings
+/.venv/
+/.venv-*/
+/.vscode/
+
+# Scrape caches, logs, and local working data
+/.job_cache/
+/logs/
+/backup/
+/import/
+/archive_*/
+
+# Generated exports in the repository root (keep nested test fixtures visible)
+/*.csv
+/*.xlsx
+/*.xls
+/summary_*.txt
+/plc_jds_to_examine-*.txt
+
+# Local proxy credentials
+/Webshare*proxies*.txt
