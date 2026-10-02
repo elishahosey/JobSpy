@@ -257,3 +257,7 @@ Naukri specific
 ├── vacancy_count
 └── work_from_home_type
 ```
+
+### Batch searches
+
+For multiple queries with query-origin metadata and CSV/Excel export, see [Batch searches](BATCH_SEARCH.md).
