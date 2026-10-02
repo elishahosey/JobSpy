@@ -16,8 +16,8 @@ from jobspy.util import desired_order
 def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
     """Call scrape_jobs once per query, preserving all rows and query text.
 
-    Each search has query, mode, and optionally google_search_term. Other
-    scrape_jobs options are shared by every search. Modes are metadata only.
+    Each search has query, mode, and optional google_search_term/results_wanted.
+    Other scrape_jobs options are shared by every search. Modes are metadata only.
     """
     if not isinstance(searches, list) or not searches:
         raise ValueError("searches must be a non-empty list")
@@ -30,9 +30,11 @@ def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
             "query",
             "mode",
             "google_search_term",
+            "results_wanted",
         }:
             raise ValueError(
-                "Each search needs query, mode, and optional google_search_term"
+                "Each search needs query, mode, and optional "
+                "google_search_term/results_wanted"
             )
         if not isinstance(search.get("query"), str) or not search["query"].strip():
             raise ValueError("Each query must be a non-empty string")
@@ -43,13 +45,20 @@ def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
             not isinstance(google_query, str) or not google_query.strip()
         ):
             raise ValueError("google_search_term must be a non-empty string or null")
+        if "results_wanted" in search and (
+            type(search["results_wanted"]) is not int or search["results_wanted"] < 1
+        ):
+            raise ValueError("Per-search results_wanted must be a positive integer")
 
     frames = []
     for search in searches:
+        options = dict(scrape_options)
+        if "results_wanted" in search:
+            options["results_wanted"] = search["results_wanted"]
         jobs = scrape_jobs(
             search_term=search["query"],
             google_search_term=search.get("google_search_term"),
-            **scrape_options,
+            **options,
         ).copy()
         # Upstream returns a columnless dataframe when no jobs are found.
         if jobs.empty and len(jobs.columns) == 0:

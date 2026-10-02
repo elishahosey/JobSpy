@@ -260,4 +260,13 @@ Naukri specific
 
 ### Batch searches
 
-For multiple queries with query-origin metadata and CSV/Excel export, see [Batch searches](BATCH_SEARCH.md).
+Edit [config/searches.json](config/searches.json) for your normal scrape, then run:
+
+```powershell
+.\.venv-jobspy\Scripts\python.exe -m jobspy.batch config/searches.json output/jobs.csv
+```
+
+The real configuration preserves the old active scrape settings, including per-query
+result limits. See [migration notes](config/README.md) and [Batch searches](BATCH_SEARCH.md)
+for settings, query-origin metadata, duplicate preservation, and CSV/Excel export.
+`examples/searches.json` is a separate small demo.

@@ -4,15 +4,33 @@
 metadata, and concatenates their dataframes. Title, skill, and mixed searches
 use the same provider search mechanism. No scraper internals are changed.
 
-## Run a small batch
+## Normal workflow
+
+The maintained configuration is [config/searches.json](config/searches.json),
+migrated from the active settings in the old custom branch's `joblist.py`.
+See [the migration notes](config/README.md) for the exact settings, mode choices,
+and intentionally omitted behavior. The old custom branch is not merged.
 
 From the repository root in PowerShell:
 
 ```powershell
-git switch codex/sync-upstream-search-update
-python -m venv venv
-.\venv\Scripts\python.exe -m pip install -e .
-.\venv\Scripts\python.exe -m jobspy.batch examples/searches.json output/jobs-test.csv
+.\.venv-jobspy\Scripts\python.exe -m pip install -e .
+.\.venv-jobspy\Scripts\python.exe -m jobspy.batch config/searches.json output/jobs.csv
+```
+
+If needed, create the environment first with `python -m venv .venv-jobspy`.
+The real config preserves 127 active historical queries, Texas, a 24-hour age
+filter, Indeed/LinkedIn/Google, description fetching, and per-query limits of
+120 for core queries or one for the others. It is a full run, not the 100-row demo.
+Per-query `results_wanted` overrides the shared value; lower those overrides too
+when reducing counts. Output filenames never determine the result count.
+
+## Small demo batch
+
+For the existing small example with different settings:
+
+```powershell
+.\.venv-jobspy\Scripts\python.exe -m jobspy.batch examples/searches.json output/jobs-test.csv
 ```
 
 Edit `examples/searches.json` before running. Its five searches cover all three
@@ -43,7 +61,9 @@ are intentional.
 `query` is passed unchanged as `search_term`; `mode` is metadata only and must
 be `job_title`, `skill_based`, or `mixed`. Keep `search_term` and
 `google_search_term` out of shared `scrape_options` to avoid ambiguous origins.
-Each search may optionally contain its own `google_search_term`.
+Each search may optionally contain its own `google_search_term` and a positive
+integer `results_wanted`. A per-search result limit overrides the shared limit
+for that call only; other queries keep the shared limit or upstream default.
 
 ## Dataframe and export behavior
 
@@ -81,8 +101,8 @@ or partial dataframe instead: check provider logs as well as row counts.
 For Excel:
 
 ```powershell
-.\venv\Scripts\python.exe -m pip install openpyxl
-.\venv\Scripts\python.exe -m jobspy.batch examples/searches.json output/jobs-test.xlsx
+.\.venv-jobspy\Scripts\python.exe -m pip install openpyxl
+.\.venv-jobspy\Scripts\python.exe -m jobspy.batch examples/searches.json output/jobs-test.xlsx
 ```
 
 Each CLI invocation performs a fresh scrape. Use the dataframe API to write
@@ -129,7 +149,7 @@ availability can require manual checking in Google Jobs. No query DSL is added.
 ## Offline tests
 
 ```powershell
-.\venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv-jobspy\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
 The tests mock provider calls, exercise metadata and duplicates, verify the
@@ -144,8 +164,8 @@ already reports 10 upstream files requiring formatting; this branch leaves
 those files unchanged. Format-check only the added Python files with:
 
 ```powershell
-.\venv\Scripts\python.exe -m pip install black==24.2.0
-.\venv\Scripts\python.exe -m black --check jobspy/batch.py tests/test_batch.py
+.\.venv-jobspy\Scripts\python.exe -m pip install black==24.2.0
+.\.venv-jobspy\Scripts\python.exe -m black --check jobspy/batch.py tests/test_batch.py
 ```
 
 ## Validation record (October 1, 2026)
