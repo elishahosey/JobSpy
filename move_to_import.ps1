@@ -1,6 +1,6 @@
 param(
-    [string]$Source = 'C:\Users\ehose\Development\Jobspy',
-    [string]$Destination = 'C:\Users\ehose\Development\JobSpy\import',
+    [string]$Source = '.\output',
+    [string]$Destination = 'C:\Users\ehose\Development\SkillFreq\import',
     [switch]$Execute
 )
 
