@@ -11,7 +11,13 @@ from unittest.mock import Mock, patch
 import pandas as pd
 
 from jobspy import scrape_jobs
-from jobspy.batch import dated_output_path, main, scrape_batch
+from jobspy.batch import (
+    close_file_logging,
+    configure_file_logging,
+    dated_output_path,
+    main,
+    scrape_batch,
+)
 from jobspy.google import Google
 from jobspy.indeed import Indeed
 from jobspy.linkedin import LinkedIn
@@ -200,7 +206,26 @@ class BatchTests(unittest.TestCase):
                 / f"jobs-{date.today():%m-%d-%Y}.csv"
             )
             self.assertTrue(output.exists())
+            self.assertTrue(
+                (
+                    Path(directory)
+                    / "output"
+                    / "logs"
+                    / f"scrape-{date.today():%m-%d-%Y}.log"
+                ).exists()
+            )
             self.assertEqual(scrape.call_count, len(SEARCHES))
+
+    def test_provider_logs_are_written_and_handlers_are_closed(self):
+        from jobspy.util import create_logger
+
+        with tempfile.TemporaryDirectory() as directory:
+            log_path = Path(directory) / "logs" / "scrape.log"
+            logger = create_logger("BatchTest")
+            configure_file_logging(log_path)
+            logger.warning("batch log test")
+            close_file_logging()
+            self.assertIn("batch log test", log_path.read_text(encoding="utf-8"))
         self.assertEqual(
             dated_output_path(Path("output/jobs.xlsx"), date(2026, 10, 1)),
             Path("output/jobs-10-01-2026.xlsx"),

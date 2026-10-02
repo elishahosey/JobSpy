@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import re
 from datetime import date
 from pathlib import Path
@@ -16,6 +17,7 @@ from jobspy.util import desired_order
 
 
 _DATE_SUFFIX = re.compile(r"-\d{2}-\d{2}-\d{4}$")
+_BATCH_FILE_HANDLER = "_jobspy_batch_file_handler"
 
 
 def dated_output_path(output: Path, run_date: date | None = None) -> Path:
@@ -25,6 +27,38 @@ def dated_output_path(output: Path, run_date: date | None = None) -> Path:
         return output
     stamp = run_date.strftime("%m-%d-%Y")
     return output.with_name(f"{output.stem}-{stamp}{output.suffix}")
+
+
+def configure_file_logging(log_path: Path) -> None:
+    """Mirror JobSpy provider logs to ``log_path`` for one CLI run."""
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    )
+    for name, logger in logging.root.manager.loggerDict.items():
+        if not name.startswith("JobSpy:") or not isinstance(logger, logging.Logger):
+            continue
+        close_file_logging(logger)
+        handler = logging.FileHandler(log_path, encoding="utf-8")
+        setattr(handler, _BATCH_FILE_HANDLER, True)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+
+def close_file_logging(target_logger: logging.Logger | None = None) -> None:
+    """Close file handlers installed by :func:`configure_file_logging`."""
+    loggers = (
+        [target_logger]
+        if target_logger is not None
+        else logging.root.manager.loggerDict.values()
+    )
+    for logger in loggers:
+        if not isinstance(logger, logging.Logger):
+            continue
+        for handler in list(logger.handlers):
+            if getattr(handler, _BATCH_FILE_HANDLER, False):
+                logger.removeHandler(handler)
+                handler.close()
 
 
 def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
@@ -113,9 +147,14 @@ def main(argv: list[str] | None = None) -> None:
     options = config.get("scrape_options", {})
     if not isinstance(options, dict):
         parser.error("scrape_options must be an object of scrape_jobs arguments")
-    jobs = scrape_batch(config.get("searches"), **options)
     output = dated_output_path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
+    log_path = output.parent / "logs" / f"scrape-{date.today():%m-%d-%Y}.log"
+    configure_file_logging(log_path)
+    try:
+        jobs = scrape_batch(config.get("searches"), **options)
+    finally:
+        close_file_logging()
     if suffix == ".csv":
         jobs.to_csv(
             output, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False
@@ -123,6 +162,7 @@ def main(argv: list[str] | None = None) -> None:
     else:
         jobs.to_excel(output, index=False, engine="openpyxl")
     print(f"Exported {len(jobs)} rows to {output}")
+    print(f"Log: {log_path}")
 
 
 if __name__ == "__main__":
