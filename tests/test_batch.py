@@ -3,13 +3,14 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pandas as pd
 
 from jobspy import scrape_jobs
-from jobspy.batch import main, scrape_batch
+from jobspy.batch import dated_output_path, main, scrape_batch
 from jobspy.google import Google
 from jobspy.indeed import Indeed
 from jobspy.linkedin import LinkedIn
@@ -142,7 +143,12 @@ class BatchTests(unittest.TestCase):
             output = Path(directory) / "output" / f"jobs{suffix}"
             with patch("jobspy.batch.scrape_jobs", return_value=self.jobs):
                 main([str(config), str(output)])
-            result = pd.read_csv(output) if suffix == ".csv" else pd.read_excel(output)
+            dated_output = dated_output_path(output)
+            result = (
+                pd.read_csv(dated_output)
+                if suffix == ".csv"
+                else pd.read_excel(dated_output)
+            )
             self.assertEqual(
                 result["search_query"].tolist(), [s["query"] for s in SEARCHES]
             )
@@ -169,6 +175,20 @@ class BatchTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             main(["unused.json", "jobs.txt"])
         scrape.assert_not_called()
+
+    def test_dated_output_path_uses_month_day_year_without_time(self):
+        self.assertEqual(
+            dated_output_path(Path("output/jobs.csv"), date(2026, 10, 1)),
+            Path("output/jobs-10-01-2026.csv"),
+        )
+        self.assertEqual(
+            dated_output_path(Path("output/jobs.xlsx"), date(2026, 10, 1)),
+            Path("output/jobs-10-01-2026.xlsx"),
+        )
+        self.assertEqual(
+            dated_output_path(Path("output/jobs-10-01-2026.csv"), date(2026, 10, 1)),
+            Path("output/jobs-10-01-2026.csv"),
+        )
 
 
 class UpstreamCompatibilityTests(unittest.TestCase):

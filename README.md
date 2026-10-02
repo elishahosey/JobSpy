@@ -266,6 +266,9 @@ Edit [config/searches.json](config/searches.json) for your normal scrape, then r
 .\.venv-jobspy\Scripts\python.exe -m jobspy.batch config/searches.json output/jobs.csv
 ```
 
+The CLI adds today's date as `MM-DD-YYYY` before the `.csv` or `.xlsx`
+extension, producing a dated export such as `output/jobs-10-01-2026.csv`.
+
 The real configuration preserves the old active scrape settings, including per-query
 result limits. See [migration notes](config/README.md) and [Batch searches](BATCH_SEARCH.md)
 for settings, query-origin metadata, duplicate preservation, and CSV/Excel export.

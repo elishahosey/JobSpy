@@ -6,8 +6,11 @@ Edit `config/searches.json`, then run from the repository root:
 .\.venv-jobspy\Scripts\python.exe -m jobspy.batch config/searches.json output/jobs.csv
 ```
 
-For Excel, use an `.xlsx` output filename and install `openpyxl` in that same
-environment. Each invocation scrapes again. To export both formats from the
+The CLI inserts today's date as `MM-DD-YYYY` before the extension. The command
+above writes `output/jobs-MM-DD-YYYY.csv`; an `.xlsx` argument writes the same
+date pattern with an Excel extension. If the supplied name already ends in
+that date pattern, it is not duplicated. For Excel, install `openpyxl` in that
+same environment. Each invocation scrapes again. To export both formats from the
 same results, load the JSON and call `scrape_batch()` once, then use pandas'
 `to_csv()` and `to_excel()` methods. Use distinct filenames to retain past runs.
 

@@ -18,6 +18,11 @@ From the repository root in PowerShell:
 .\.venv-jobspy\Scripts\python.exe -m jobspy.batch config/searches.json output/jobs.csv
 ```
 
+The CLI adds today's date as `MM-DD-YYYY` before `.csv` or `.xlsx`, so this
+writes `output/jobs-MM-DD-YYYY.csv`. A name that already has that date is left
+unchanged. The output extension still selects CSV or Excel; the filename never
+controls the result count.
+
 If needed, create the environment first with `python -m venv .venv-jobspy`.
 The real config preserves 127 active historical queries, Texas, a 24-hour age
 filter, Indeed/LinkedIn/Google, description fetching, and per-query limits of

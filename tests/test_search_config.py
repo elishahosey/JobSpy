@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from jobspy.batch import main, scrape_batch
+from jobspy.batch import dated_output_path, main, scrape_batch
 
 
 class SearchConfigTests(unittest.TestCase):
@@ -85,7 +85,12 @@ class SearchConfigTests(unittest.TestCase):
             output = Path(directory) / f"jobs{suffix}"
             with patch("jobspy.batch.scrape_jobs", return_value=jobs) as scrape:
                 main([str(config_path), str(output)])
-            result = pd.read_csv(output) if suffix == ".csv" else pd.read_excel(output)
+            dated_output = dated_output_path(output)
+            result = (
+                pd.read_csv(dated_output)
+                if suffix == ".csv"
+                else pd.read_excel(dated_output)
+            )
         self.assertEqual(scrape.call_count, len(searches))
         self.assertEqual(
             result["search_query"].tolist(), [s["query"] for s in searches]

@@ -5,12 +5,26 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
 from jobspy import scrape_jobs
 from jobspy.util import desired_order
+
+
+_DATE_SUFFIX = re.compile(r"-\d{2}-\d{2}-\d{4}$")
+
+
+def dated_output_path(output: Path, run_date: date | None = None) -> Path:
+    """Insert an ``MM-DD-YYYY`` date before a CSV or Excel suffix."""
+    run_date = run_date or date.today()
+    if _DATE_SUFFIX.search(output.stem):
+        return output
+    stamp = run_date.strftime("%m-%d-%Y")
+    return output.with_name(f"{output.stem}-{stamp}{output.suffix}")
 
 
 def scrape_batch(searches: list[dict], **scrape_options) -> pd.DataFrame:
@@ -94,14 +108,15 @@ def main(argv: list[str] | None = None) -> None:
     if not isinstance(options, dict):
         parser.error("scrape_options must be an object of scrape_jobs arguments")
     jobs = scrape_batch(config.get("searches"), **options)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
+    output = dated_output_path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
     if suffix == ".csv":
         jobs.to_csv(
-            args.output, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False
+            output, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False
         )
     else:
-        jobs.to_excel(args.output, index=False, engine="openpyxl")
-    print(f"Exported {len(jobs)} rows to {args.output}")
+        jobs.to_excel(output, index=False, engine="openpyxl")
+    print(f"Exported {len(jobs)} rows to {output}")
 
 
 if __name__ == "__main__":
