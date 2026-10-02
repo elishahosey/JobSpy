@@ -60,6 +60,12 @@ Set `SCRAPE_LOG_ENABLED=0` to disable progress logging.
 
 ### SkillFreq intake test file
 
+Scrape exactly one real job and save it as `jobs-M-D-YY.csv`:
+
+```powershell
+python scrape_one_job.py
+```
+
 Generate one synthetic, single-job `jobs-M-D-YY.csv` in the repository root without running a live scrape:
 
 ```powershell
